@@ -47,22 +47,22 @@ function App() {
     }
   }, [userId]);
 
-  // Initial load
-  const loadData = useCallback(async () => {
+  // ── Initial load for slots ──
+  useEffect(() => {
     setLoading(true);
     setError(null);
-    try {
-      await Promise.all([fetchSlots(), fetchBookings()]);
-    } catch (err) {
-      setError(err.message || "Failed to load data");
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchSlots, fetchBookings]);
+    fetchSlots()
+      .catch((err) => setError(err.message || "Failed to load slots"))
+      .finally(() => setLoading(false));
+  }, [fetchSlots]);
 
+  // ── Debounced fetch bookings when userId changes ──
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    const handler = setTimeout(() => {
+      fetchBookings().catch(console.error);
+    }, 500); // Wait 500ms after user stops typing before fetching
+    return () => clearTimeout(handler);
+  }, [fetchBookings]);
 
   // Auto-refresh slots every 10 seconds for live availability
   useEffect(() => {
@@ -106,7 +106,7 @@ function App() {
           <span className="error-icon">⚠️</span>
           <h3>Something went wrong</h3>
           <p>{error}</p>
-          <button className="retry-btn" onClick={loadData}>
+          <button className="retry-btn" onClick={() => window.location.reload()}>
             Try Again
           </button>
         </div>
