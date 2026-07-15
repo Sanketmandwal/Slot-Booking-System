@@ -1,4 +1,5 @@
 import { useState } from "react";
+import api from "../config/api";
 
 function SlotCard({ slot, userId, isBooked, onBook }) {
   const [isBooking, setIsBooking] = useState(false);
@@ -33,23 +34,12 @@ function SlotCard({ slot, userId, isBooked, onBook }) {
     setFeedback(null);
 
     try {
-      const res = await fetch(`/api/slots/${slot._id}/book`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: userId.trim() }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setFeedback({ type: "error", message: data.error || "Booking failed" });
-        return;
-      }
-
+      await api.post(`/slots/${slot._id}/book`, { userId: userId.trim() });
       setFeedback({ type: "success", message: "Booked successfully!" });
       onBook(); // refresh slots & bookings
     } catch (err) {
-      setFeedback({ type: "error", message: "Network error — please try again" });
+      const message = err.response?.data?.error || "Network error — please try again";
+      setFeedback({ type: "error", message });
     } finally {
       setIsBooking(false);
       // Clear feedback after 3 seconds

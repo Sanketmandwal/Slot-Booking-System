@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import SlotCard from "./components/SlotCard";
+import api from "./config/api";
 import "./App.css";
-
-const API_BASE = "/api";
 
 function App() {
   const [slots, setSlots] = useState([]);
@@ -25,10 +24,8 @@ function App() {
   // Fetch slots
   const fetchSlots = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/slots`);
-      if (!res.ok) throw new Error("Failed to fetch slots");
-      const data = await res.json();
-      setSlots(data);
+      const res = await api.get("/slots");
+      setSlots(res.data);
     } catch (err) {
       console.error("Fetch slots error:", err);
       throw err;
@@ -42,10 +39,8 @@ function App() {
       return;
     }
     try {
-      const res = await fetch(`${API_BASE}/bookings?userId=${encodeURIComponent(userId.trim())}`);
-      if (!res.ok) throw new Error("Failed to fetch bookings");
-      const data = await res.json();
-      setBookings(data);
+      const res = await api.get(`/bookings?userId=${encodeURIComponent(userId.trim())}`);
+      setBookings(res.data);
     } catch (err) {
       console.error("Fetch bookings error:", err);
       throw err;
