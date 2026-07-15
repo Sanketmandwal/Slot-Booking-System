@@ -21,12 +21,10 @@ app.use(express.json());
 app.use("/api/slots", slotsRouter);
 app.use("/api/bookings", bookingsRouter);
 
-// ── Health check ──
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// ── Connect to MongoDB and start server ──
 mongoose
   .connect(MONGO_URI)
   .then(() => {
