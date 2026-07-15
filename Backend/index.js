@@ -12,7 +12,7 @@ const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/slot-booki
 
 // ── Middleware ──
 app.use(cors({
-  origin: "https://slot-booking-system-seven.vercel.app/",
+  origin: "https://slot-booking-system-seven.vercel.app",
   credentials: true,
 }));
 app.use(express.json());
